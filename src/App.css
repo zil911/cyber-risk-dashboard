@@ -2289,3 +2289,112 @@
     white-space: normal;
   }
 }
+/* Mobile navigation drawer polish */
+@media (max-width: 768px) {
+  .sidebar,
+  .mobile-menu,
+  .mobile-nav,
+  .nav-drawer,
+  .drawer {
+    width: min(88vw, 360px) !important;
+    max-width: 360px !important;
+    padding: 24px 18px !important;
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .sidebar *,
+  .mobile-menu *,
+  .mobile-nav *,
+  .nav-drawer *,
+  .drawer * {
+    box-sizing: border-box;
+  }
+
+  .sidebar nav,
+  .mobile-menu nav,
+  .mobile-nav nav,
+  .nav-drawer nav,
+  .drawer nav {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: center !important;
+  }
+
+  .sidebar a,
+  .sidebar button,
+  .mobile-menu a,
+  .mobile-menu button,
+  .mobile-nav a,
+  .mobile-nav button,
+  .nav-drawer a,
+  .nav-drawer button,
+  .drawer a,
+  .drawer button {
+    width: 100% !important;
+    min-height: 56px !important;
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  .sidebar .active,
+  .mobile-menu .active,
+  .mobile-nav .active,
+  .nav-drawer .active,
+  .drawer .active {
+    background: #1f6f66 !important;
+    color: white !important;
+  }
+
+  .language-switch,
+  .lang-switch,
+  .language-toggle {
+    width: 100% !important;
+    margin-top: 18px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .close-btn,
+  .menu-close,
+  .drawer-close {
+    width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    border-radius: 14px !important;
+    font-size: 24px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    overflow-x: hidden !important;
+  }
+
+  .page,
+  .container,
+  .content,
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    overflow-x: hidden !important;
+  }
+
+  .card,
+  .panel,
+  .section {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
