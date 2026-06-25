@@ -65,6 +65,10 @@ const EN_TRANSLATIONS = {
   "لوحة التحكم": "Dashboard",
   "إضافة خطر": "Add Risk",
   "تقييم مشروع جديد": "New Project Assessment",
+  "فتح قائمة التنقل": "Open navigation menu",
+  "إغلاق قائمة التنقل": "Close navigation menu",
+  "فتح القسم": "Expand section",
+  "إغلاق القسم": "Collapse section",
   "حوكمة وإدارة المخاطر": "Governance and Risk Management",
   "الأمن السيبراني": "Cybersecurity",
   "التنقل الرئيسي": "Main navigation",
@@ -812,11 +816,36 @@ function AssessmentCurrentSummary({ selectedValues, liveCalculation }) {
 
 function AssessmentReferenceGuide({ selectedValues, liveCalculation }) {
   const { language, t } = useI18n();
+  const [openSections, setOpenSections] = useState({
+    impact: true,
+    likelihood: true,
+  });
   const ciaDimensions = [
     { key: "confidentiality", label: t("السرية") },
     { key: "integrity", label: t("السلامة") },
     { key: "availability", label: t("التوفر") },
   ];
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 768px)");
+    const syncGuideState = () => {
+      setOpenSections({
+        impact: !mobileQuery.matches,
+        likelihood: !mobileQuery.matches,
+      });
+    };
+
+    syncGuideState();
+    mobileQuery.addEventListener("change", syncGuideState);
+    return () => mobileQuery.removeEventListener("change", syncGuideState);
+  }, []);
+
+  const toggleSection = (section) => {
+    setOpenSections((current) => ({
+      ...current,
+      [section]: !current[section],
+    }));
+  };
 
   return (
     <section className="crm-reference-guide" aria-label={t("دليل التقييم")}>
@@ -829,73 +858,99 @@ function AssessmentReferenceGuide({ selectedValues, liveCalculation }) {
 
       <div className="crm-guide-cards">
         <article className="crm-guide-card">
-          <div className="crm-guide-card-header">
+          <button
+            className="crm-guide-card-header crm-guide-toggle"
+            type="button"
+            aria-expanded={openSections.impact}
+            onClick={() => toggleSection("impact")}
+          >
             <span aria-hidden="true">CIA</span>
             <div>
               <h3>{t("مستويات الأثر CIA")}</h3>
               <p>{t("اختر أثر السرية والسلامة والتوفر حسب أعلى تأثير متوقع على الجهة.")}</p>
             </div>
-          </div>
+            <em aria-hidden="true">{openSections.impact ? "−" : "+"}</em>
+            <span className="crm-visually-hidden">
+              {openSections.impact ? t("إغلاق القسم") : t("فتح القسم")}
+            </span>
+          </button>
 
-          <div className="crm-scale-card-grid">
-            {IMPACT_LEVELS.map((level) => {
-              const selectedDimensions = ciaDimensions.filter((dimension) =>
-                isReferenceSelected(level.value, selectedValues?.[dimension.key]),
-              );
-              const isSelected = selectedDimensions.length > 0;
+          {openSections.impact && (
+            <div className="crm-guide-card-body">
+              <div className="crm-scale-card-grid">
+                {IMPACT_LEVELS.map((level) => {
+                  const selectedDimensions = ciaDimensions.filter((dimension) =>
+                    isReferenceSelected(level.value, selectedValues?.[dimension.key]),
+                  );
+                  const isSelected = selectedDimensions.length > 0;
 
-              return (
-                <article
-                  className={`crm-scale-card crm-scale-tone-${level.value} ${isSelected ? "crm-scale-card-selected" : ""}`}
-                  key={level.value}
-                >
-                  {isSelected && <span className="crm-selected-label">{t("محدد")}</span>}
-                  <span className="crm-scale-number">{level.value}</span>
-                  <strong>{t(level.label)}</strong>
-                  <p>{t(level.description)}</p>
-                  {isSelected && (
-                    <div className="crm-selected-dimensions">
-                      {selectedDimensions.map((dimension) => (
-                        <em key={dimension.key}>{dimension.label}</em>
-                      ))}
-                    </div>
-                  )}
-                </article>
-              );
-            })}
-          </div>
+                  return (
+                    <article
+                      className={`crm-scale-card crm-scale-tone-${level.value} ${isSelected ? "crm-scale-card-selected" : ""}`}
+                      key={level.value}
+                    >
+                      {isSelected && <span className="crm-selected-label">{t("محدد")}</span>}
+                      <span className="crm-scale-number">{level.value}</span>
+                      <strong>{t(level.label)}</strong>
+                      <p>{t(level.description)}</p>
+                      {isSelected && (
+                        <div className="crm-selected-dimensions">
+                          {selectedDimensions.map((dimension) => (
+                            <em key={dimension.key}>{dimension.label}</em>
+                          ))}
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
 
-          <p className="crm-guide-note">
-            {t("يتم اختيار أعلى قيمة من أثر السرية والسلامة والتوفر كأثر مختار.")}
-          </p>
+              <p className="crm-guide-note">
+                {t("يتم اختيار أعلى قيمة من أثر السرية والسلامة والتوفر كأثر مختار.")}
+              </p>
+            </div>
+          )}
         </article>
 
         <article className="crm-guide-card">
-          <div className="crm-guide-card-header">
+          <button
+            className="crm-guide-card-header crm-guide-toggle"
+            type="button"
+            aria-expanded={openSections.likelihood}
+            onClick={() => toggleSection("likelihood")}
+          >
             <span aria-hidden="true">{language === "ar" ? "؟" : "?"}</span>
             <div>
               <h3>{t("مستويات الاحتمالية")}</h3>
               <p>{t("حدد مدى توقع حدوث الخطر بناءً على السياق والثغرات والضوابط الحالية.")}</p>
             </div>
-          </div>
+            <em aria-hidden="true">{openSections.likelihood ? "−" : "+"}</em>
+            <span className="crm-visually-hidden">
+              {openSections.likelihood ? t("إغلاق القسم") : t("فتح القسم")}
+            </span>
+          </button>
 
-          <div className="crm-scale-card-grid">
-            {LIKELIHOOD_LEVELS.map((level) => {
-              const isSelected = isReferenceSelected(level.value, selectedValues?.likelihood);
+          {openSections.likelihood && (
+            <div className="crm-guide-card-body">
+              <div className="crm-scale-card-grid">
+                {LIKELIHOOD_LEVELS.map((level) => {
+                  const isSelected = isReferenceSelected(level.value, selectedValues?.likelihood);
 
-              return (
-                <article
-                  className={`crm-scale-card crm-scale-tone-${level.value} ${isSelected ? "crm-scale-card-selected" : ""}`}
-                  key={level.value}
-                >
-                  {isSelected && <span className="crm-selected-label">{t("محدد")}</span>}
-                  <span className="crm-scale-number">{level.value}</span>
-                  <strong>{t(level.label)}</strong>
-                  <p>{t(level.description)}</p>
-                </article>
-              );
-            })}
-          </div>
+                  return (
+                    <article
+                      className={`crm-scale-card crm-scale-tone-${level.value} ${isSelected ? "crm-scale-card-selected" : ""}`}
+                      key={level.value}
+                    >
+                      {isSelected && <span className="crm-selected-label">{t("محدد")}</span>}
+                      <span className="crm-scale-number">{level.value}</span>
+                      <strong>{t(level.label)}</strong>
+                      <p>{t(level.description)}</p>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </article>
       </div>
     </section>
@@ -911,27 +966,110 @@ function getLevelCounts(risks) {
 
 function TopNavigation({ currentPage, onNavigate }) {
   const { language, t, toggleLanguage } = useI18n();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const links = [
     { id: "dashboard", label: t("لوحة التحكم") },
     { id: "add", label: t("إضافة خطر") },
     { id: "project", label: t("تقييم مشروع جديد") },
   ];
 
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [currentPage, language]);
+
+  useEffect(() => {
+    if (!isMenuOpen) return undefined;
+
+    const mobileQuery = window.matchMedia("(max-width: 768px)");
+    const previousOverflow = document.body.style.overflow;
+    const closeMenu = (event) => {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+      }
+    };
+    const closeOnDesktop = (event) => {
+      if (!event.matches) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (mobileQuery.matches) {
+      document.body.style.overflow = "hidden";
+    }
+    document.addEventListener("keydown", closeMenu);
+    mobileQuery.addEventListener("change", closeOnDesktop);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeMenu);
+      mobileQuery.removeEventListener("change", closeOnDesktop);
+    };
+  }, [isMenuOpen]);
+
+  const navigate = (page) => {
+    onNavigate(page);
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="crm-topbar">
-      <div className="crm-brand">
-        <span>{t("حوكمة وإدارة المخاطر")}</span>
-        <strong>{t("الأمن السيبراني")}</strong>
+      <div className="crm-topbar-main">
+        <div className="crm-brand">
+          <span>{t("حوكمة وإدارة المخاطر")}</span>
+          <strong>{t("الأمن السيبراني")}</strong>
+        </div>
+
+        <button
+          className="crm-mobile-menu-toggle"
+          type="button"
+          aria-expanded={isMenuOpen}
+          aria-controls="crm-mobile-navigation"
+          aria-label={isMenuOpen ? t("إغلاق قائمة التنقل") : t("فتح قائمة التنقل")}
+          onClick={() => setIsMenuOpen((current) => !current)}
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
       </div>
 
-      <div className="crm-topbar-actions">
+      {isMenuOpen && (
+        <button
+          className="crm-mobile-menu-backdrop"
+          type="button"
+          aria-label={t("إغلاق قائمة التنقل")}
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
+
+      <div
+        className={`crm-topbar-actions ${isMenuOpen ? "crm-mobile-menu-open" : ""}`}
+        id="crm-mobile-navigation"
+      >
+        <div className="crm-mobile-drawer-header">
+          <span className="crm-mobile-drawer-spacer" aria-hidden="true" />
+          <div className="crm-mobile-drawer-brand">
+            <span>{t("حوكمة وإدارة المخاطر")}</span>
+            <strong>{t("الأمن السيبراني")}</strong>
+          </div>
+          <button
+            className="crm-mobile-drawer-close"
+            type="button"
+            aria-label={t("إغلاق قائمة التنقل")}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+
         <nav className="crm-tabs" aria-label={t("التنقل الرئيسي")}>
           {links.map((link) => (
             <button
               key={link.id}
               className={currentPage === link.id ? "active" : ""}
               type="button"
-              onClick={() => onNavigate(link.id)}
+              aria-current={currentPage === link.id ? "page" : undefined}
+              onClick={() => navigate(link.id)}
             >
               {link.label}
             </button>

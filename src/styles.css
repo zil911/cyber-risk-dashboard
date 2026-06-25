@@ -20,6 +20,8 @@
 html,
 #root {
   min-height: 100%;
+  width: 100%;
+  max-width: 100%;
 }
 
 body {
@@ -33,11 +35,29 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+#root {
+  overflow-x: clip;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
 button,
 input,
 select,
 textarea {
   font: inherit;
+  max-width: 100%;
 }
 
 button {
@@ -780,5 +800,71 @@ textarea:focus {
   .calculation-grid,
   .summary-card-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    min-width: 0;
+    line-height: 1.65;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  button,
+  select,
+  input:not([type="checkbox"]):not([type="radio"]) {
+    min-height: 44px;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+  }
+
+  .app-shell,
+  .content,
+  .page-stack,
+  .page-header,
+  .card,
+  .panel,
+  .modal {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .modal-backdrop {
+    padding:
+      max(12px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .modal {
+    width: min(92vw, 680px);
+    max-height: calc(100dvh - 24px);
+    overscroll-behavior: contain;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 16px;
+  }
+
+  .modal {
+    width: 92vw;
+    padding: 16px;
+  }
+
+  .modal-header {
+    gap: 12px;
   }
 }
