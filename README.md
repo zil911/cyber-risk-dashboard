@@ -1,16 +1,55 @@
-# React + Vite
+# Cybersecurity Risk Management Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A prototype Arabic RTL GRC dashboard for managing cybersecurity risks and project assessments.
 
-Currently, two official plugins are available:
+## Project Idea
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project simulates cybersecurity risk management activities within a GRC environment. It allows users to register risks, assess likelihood and CIA impact, calculate risk scores, classify risk levels, and monitor risks through a dashboard.
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Add cybersecurity risks
+- Calculate risk score using likelihood and highest CIA impact
+- Classify risks as Low, Medium, High, or Critical
+- Add project risk assessments
+- Generate suggested security requirements
+- Dashboard for monitoring, editing, deleting, and viewing details
+- Arabic RTL interface
+- Data persistence using localStorage
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React.js
+- Vite
+- JavaScript
+- HTML
+- CSS
+- localStorage
+- GitHub
+- Vercel
+
+## Risk Calculation
+
+Selected Impact = highest value of Confidentiality, Integrity, and Availability.
+
+Risk Score = Likelihood × Selected Impact
+
+Risk Levels:
+
+- 1–5: Low
+- 6–10: Medium
+- 11–15: High
+- 16–25: Critical
+
+## Project Status
+
+This project is a prototype for learning and demonstration purposes. It is not a production-ready system.
+
+## Future Improvements
+
+- Add real database
+- Add authentication
+- Add user roles
+- Add audit logs
+- Add backend API
+- Improve security controls
